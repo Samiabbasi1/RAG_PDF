@@ -7,11 +7,8 @@ from datetime import datetime
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_community.vectorstores import FAISS
-from langchain_community.vectorstores.faiss import load_local
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
-
-import os
 
 
 def get_pdf_text(pdf_docs):
@@ -66,7 +63,7 @@ def user_input(user_question, model_name, api_key, pdf_docs, conversation_histor
     get_vector_store(text_chunks, model_name, api_key)
 
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=api_key)
-    vector_db = load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
+    vector_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
 
     docs = vector_db.similarity_search(user_question)
     chain = get_conversational_chain(model_name, api_key)
@@ -159,7 +156,7 @@ def main():
     model_name = st.sidebar.selectbox("Select Model", ["Google AI"])
     api_key = st.sidebar.text_input("Google API Key", type="password")
 
-    st.sidebar.markdown("[AIzaSyAmlqWg52M7C0ZgYe4qKUPMe3_yh-AK_zc](https://ai.google.dev/)")
+    st.sidebar.markdown("[Get your API Key](https://ai.google.dev/)")
 
     pdf_docs = st.sidebar.file_uploader("Upload PDFs", accept_multiple_files=True)
 
